@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>pokeservice</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <h2>ALLPOKEMONS</h2>
+
+    <form action="search_pokemon/" method="post">
+        {% csrf_token %}
+        <input type="text" name="search" placeholder="Search...">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if pokemons %}
+    <ul>
+        {% for pokemon in pokemons %}
+        <li>{{ pokemon.name }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No results found.</p>
+    {% endif %}
+</body>
+</html>
