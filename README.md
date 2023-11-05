@@ -1,9 +1,6 @@
 # PokeService
 
-```py
-py -m venv env
-pip install -r requirements.txt
+---
 
-./env/Scripts/activate
-py ./main/manage.py runserver
-```
+v1.0 --> merge to c++ backend
+`es`
