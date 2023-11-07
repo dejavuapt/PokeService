@@ -2,7 +2,33 @@
 
 {% block layout_title %} Каталог покемонов {% endblock %}
 
+{% block layout_content_navbar%}
+
+{% include 'main/links_bar.html' %}
+{% include 'main/search_bar.html' %}
+
+{% endblock %}
 
 {% block layout_body %}
-Приве привет!
+<div class="container">
+    <div class="row justify-content-between">
+        {% for pokemon_data in pokemons_data %}
+            <div class="card mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{pokemon_data.picture}}" class="img-fluid  mx-auto d-block rounded-start" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                    <h5 class="card-title">{{ pokemon_data.name }}</h5>
+                    <p class="card-text">HP: {{ pokemon_data.hp }}</p>
+                    <p class="card-text">Attack:  {{ pokemon_data.attack }}</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+</div>
 {% endblock %}
