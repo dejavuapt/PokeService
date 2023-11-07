@@ -13,5 +13,5 @@ pip install -r requirements.txt
 todos:
 - [x] catalog 
 - [x] detailed_pokemon
-- [ ] search
+- [x] search -> [ ] bug when you tried go to next page in searced pokemons
 - [ ] battle
