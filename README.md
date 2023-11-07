@@ -8,6 +8,10 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
+```bash
+-u postgres psql battle_log_db
+SELECT * FROM main_battlelog
+```
 
 
 todos:
