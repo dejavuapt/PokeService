@@ -4,13 +4,13 @@ import typing
 URL_2_CAST: str = "https://pokeapi.co/api/v2/pokemon"
 
 
-def GetPokemons(n_pokemons: int = None) -> typing.List[str]: 
+def GetPokemons(n_pokemons: int = None, offset_n: int = 0) -> typing.List[str]: 
     try:
         if n_pokemons == None:
             count_of_pokemons = requests.get(URL_2_CAST).json()['count']
         else:
             count_of_pokemons = f'{n_pokemons}'
-        response = requests.get(URL_2_CAST, params={"limit": count_of_pokemons, "offset": 0})
+        response = requests.get(URL_2_CAST, params={"limit": count_of_pokemons, "offset": offset_n})
         data_of_response = response.json()
         return [pokemon['name'] for pokemon in data_of_response['results']]
     except requests.exceptions.HTTPError as http_error:
@@ -35,9 +35,15 @@ def GetPokemonData(pokemon: str) -> typing.Dict[str, str]:
         print(http_error)
         return {}
     
-def GetPokemonsData(n_pokemons: int = None) -> typing.List[dict]:
+def GetPokemonsData(n_pokemons: int = None, offset_n: int = 0, pokemons: typing.List[str] = None) -> typing.List[dict]:
     try:
-        return [GetPokemonData(pokemon) for pokemon in GetPokemons(n_pokemons)]
+        if(pokemons == None and n_pokemons != None ):
+            _pokemons = GetPokemons(n_pokemons, offset_n)
+        else:
+            _pokemons = pokemons
+
+        return [GetPokemonData(pokemon) for pokemon in _pokemons]
+        
     except requests.exceptions.HTTPError as http_error:
         return []
 

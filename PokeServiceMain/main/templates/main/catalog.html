@@ -1,4 +1,5 @@
 {% extends 'main/layout.html' %}
+{% load static %}
 
 {% block layout_title %} Каталог покемонов {% endblock %}
 
@@ -10,25 +11,61 @@
 {% endblock %}
 
 {% block layout_body %}
-<div class="container">
-    <div class="row justify-content-between">
-        {% for pokemon_data in pokemons_data %}
-            <div class="card mb-3" style="max-width: 540px;">
-                <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="{{pokemon_data.picture}}" class="img-fluid  mx-auto d-block rounded-start" alt="...">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                    <h5 class="card-title">{{ pokemon_data.name }}</h5>
-                    <p class="card-text">HP: {{ pokemon_data.hp }}</p>
-                    <p class="card-text">Attack:  {{ pokemon_data.attack }}</p>
+<div class="container text-center">
+{{ page_pokemons }}
+    <div class="row">
+        <div class="col">
+            {% if page_pokemons.has_next %}
+                <button type="button" class="btn btn-info">
+                    <a href="?page={{ page_pokemons.next_page_number }}"> next > </a>
+                </button>
+                <button type="button" class="btn btn-info">
+                    <a href="?page={{ page_pokemons.paginator.num_pages }}"> last >> </a>
+                </button>
+            {% endif %}
+        </div>
+
+        <div class="col-md-auto">
+            <div class="row justify-content-between">
+                {% for pokemon_data in pokemons_data %}
+                <div class="card mb-3" style="max-width: 540px;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            {% if pokemon_data.picture %}
+                                <img src="{{pokemon_data.picture}}" class="img-fluid  mx-auto d-block rounded-start"
+                                    alt="..." style="width: 200px;">
+                            {% else %}
+                                <img src="{% static 'main/img/empty.svg' %}" class="img-fluid  mx-auto d-block rounded-start"
+                                    alt="...">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ pokemon_data.name }}</h5>
+                                <p class="card-text">HP: {{ pokemon_data.hp }}</p>
+                                <p class="card-text">Attack: {{ pokemon_data.attack }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
+                {% endfor %}
             </div>
-        {% endfor %}
+        </div>
 
+        <div class="col">
+            {% if page_pokemons.has_previous %}
+                <button type="button" class="btn btn-info">
+                    <a href="?page={{ page_pokemons.previous_page_number }}"> < previous </a>
+                </button>
+
+                <button type="button" class="btn btn-info">
+                    <a href="?page=1"> << first </a>
+                </button>
+
+            {% endif %}
+        </div>
     </div>
 </div>
+
+
 {% endblock %}
