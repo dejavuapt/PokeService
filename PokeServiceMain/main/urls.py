@@ -3,5 +3,6 @@ from . import views as main_views
 
 urlpatterns = [
     path('', main_views.PokemonsCatalog, name='catalog'),
-    path('pokemon/<pokemon>', main_views.PokemonDetail, name='pokemon_detail')
+    path('pokemon/<pokemon>', main_views.PokemonDetail, name='pokemon_detail'),
+    path('battle/<pokemon>', main_views.PokemonBattle, name='battle')
 ]

@@ -44,12 +44,15 @@
                         <div class="col-md-8">
                             <div class="card-body">
                                 <a href="{% url 'pokemon_detail' pokemon_data.name %}" style="text-decoration: none;">
-                                    <h5 class="card-title">{{ pokemon_data.name }}</h5>
+                                    <h5 class="card-title text-uppercase">{{ pokemon_data.name }}</h5>
                                 </a>
-                                <p class="card-text">HP: {{ pokemon_data.hp }}</p>
-                                <p class="card-text">Attack: {{ pokemon_data.attack }}</p>
+                                <p class="card-text"><b>HP: </b>{{ pokemon_data.hp }}</p>
+                                <p class="card-text"><b>Attack: </b>{{ pokemon_data.attack }}</p>
                             </div>
+                            <a href="{% url 'battle' pokemon_data.name %}" style="text-decoration: none;"> <button type="button" class="btn btn-info">
+                                Poke it 🖐</button> </a>
                         </div>
+                        
                     </div>
                 </div>
                 {% endfor %}

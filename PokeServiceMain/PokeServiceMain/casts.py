@@ -1,5 +1,6 @@
 import requests
 import typing 
+import random
 
 URL_2_CAST: str = "https://pokeapi.co/api/v2/pokemon"
 
@@ -23,6 +24,7 @@ def GetPokemonData(pokemon: str) -> typing.Dict[str, str]:
         return {
             'name' : pokemon,
             'picture' : data_of_response['sprites']['front_default'],
+            'back_picture': data_of_response['sprites']['back_default'],
             'height' : data_of_response['height'],
             'weight' : data_of_response['weight'],
             'hp': data_of_response['stats'][0]['base_stat'],
@@ -47,3 +49,5 @@ def GetPokemonsData(n_pokemons: int = None, offset_n: int = 0, pokemons: typing.
     except requests.exceptions.HTTPError as http_error:
         return []
 
+def GetRandomPokemonData(exception_pokemons: typing.List[str] = []) -> typing.Dict[str, str]:
+    return GetPokemonData(random.choice([pokemon for pokemon in GetPokemons() if pokemon not in exception_pokemons]))
