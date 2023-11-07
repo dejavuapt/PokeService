@@ -12,4 +12,6 @@ pip install -r requirements.txt
 
 todos:
 - [x] catalog 
+- [x] detailed_pokemon
+- [ ] search
 - [ ] battle

@@ -1,0 +1,55 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block layout_title %} Покемон {{pokemon_data.name}} {% endblock %}
+
+{% block layout_content_navbar%}
+
+{% endblock %}
+
+{% block layout_body %}
+
+<div class="container mt-5 mb-5">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- image -->
+                        <div class="images p-3">
+                            <div class="text-center p-4"> 
+                                {% if pokemon_data.picture %}
+                                <img id="main-image" src="{{pokemon_data.picture}}" width="250" />
+                                {% else %}
+                                <img id="main-image" src="{% static 'main/img/empty.svg' %}" width="250" />
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="product p-4">
+                            <div class="mt-4 mb-3"> <span class="text-uppercase text-muted brand">Pokemon</span>
+                                <h5 class="text-uppercase">{{pokemon_data.name}}</h5>
+                            </div>
+                            <!-- skills --> 
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><b>▶ Height: </b>{{pokemon_data.height}}</li>
+                                <li class="list-group-item"><b>▶ Weight: </b>{{pokemon_data.weight}}</li>
+                                <li class="list-group-item"><b>▶ HP: </b>{{pokemon_data.hp}}</li>
+                                <li class="list-group-item"><b>▶ Attack: </b>{{pokemon_data.attack}}</li>
+                                <li class="list-group-item"><b>▶ Defense: </b>{{pokemon_data.defense}}</li>
+                                <li class="list-group-item"><b>▶ Speed: </b>{{pokemon_data.speed}}</li>
+                                <li class="list-group-item"><b>▶ Types of attack: </b>{{pokemon_data.types_of_attack}}</li>
+                            </ul>
+                            <div class="cart mt-4 align-items-center"> 
+                                <button class="btn btn-info text-uppercase mr-2 px-4">Poke it! ⚔</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

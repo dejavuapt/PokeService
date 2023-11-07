@@ -4,6 +4,8 @@ from django.core.paginator import Paginator
 
 
 import PokeServiceMain.casts as casts
+import typing 
+
 
 
 # Create your views here.
@@ -25,9 +27,14 @@ def PokemonsCatalog(request):
 
     
     page_pokemons = catalog_paginator.get_page(page)
-    
+
     data_2_page:dict = {
         'pokemons_data': pokemons_data_by_cached,
         'page_pokemons' : page_pokemons
         }
     return render(request, "main/catalog.html", data_2_page)
+
+
+
+def PokemonDetail(request, pokemon: str = None):
+    return render(request, 'main/detailed.html', {'pokemon_data': casts.GetPokemonData(pokemon)})

@@ -12,16 +12,15 @@
 
 {% block layout_body %}
 <div class="container text-center">
-{{ page_pokemons }}
+    {{ page_pokemons }}
     <div class="row">
         <div class="col">
             {% if page_pokemons.has_next %}
-                <button type="button" class="btn btn-info">
-                    <a href="?page={{ page_pokemons.next_page_number }}"> next > </a>
-                </button>
-                <button type="button" class="btn btn-info">
-                    <a href="?page={{ page_pokemons.paginator.num_pages }}"> last >> </a>
-                </button>
+            <a href="?page={{ page_pokemons.next_page_number }}" style="text-decoration: none;"> <button type="button" class="btn btn-info">next
+                    ></button> </a>
+            <a href="?page={{ page_pokemons.paginator.num_pages }}" style="text-decoration: none;"> <button type="button" class="btn btn-info">last
+                    >></button>
+                </button></a>
             {% endif %}
         </div>
 
@@ -31,17 +30,22 @@
                 <div class="card mb-3" style="max-width: 540px;">
                     <div class="row g-0">
                         <div class="col-md-4">
-                            {% if pokemon_data.picture %}
+                            <a href="{% url 'pokemon_detail' pokemon_data.name %}">
+                                {% if pokemon_data.picture %}
                                 <img src="{{pokemon_data.picture}}" class="img-fluid  mx-auto d-block rounded-start"
                                     alt="..." style="width: 200px;">
-                            {% else %}
-                                <img src="{% static 'main/img/empty.svg' %}" class="img-fluid  mx-auto d-block rounded-start"
-                                    alt="...">
-                            {% endif %}
+                                {% else %}
+                                <img src="{% static 'main/img/empty.svg' %}"
+                                    class="img-fluid  mx-auto d-block rounded-start" alt="...">
+                                {% endif %}
+                            </a>
+
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
-                                <h5 class="card-title">{{ pokemon_data.name }}</h5>
+                                <a href="{% url 'pokemon_detail' pokemon_data.name %}" style="text-decoration: none;">
+                                    <h5 class="card-title">{{ pokemon_data.name }}</h5>
+                                </a>
                                 <p class="card-text">HP: {{ pokemon_data.hp }}</p>
                                 <p class="card-text">Attack: {{ pokemon_data.attack }}</p>
                             </div>
@@ -54,13 +58,13 @@
 
         <div class="col">
             {% if page_pokemons.has_previous %}
-                <button type="button" class="btn btn-info">
-                    <a href="?page={{ page_pokemons.previous_page_number }}"> < previous </a>
-                </button>
 
-                <button type="button" class="btn btn-info">
-                    <a href="?page=1"> << first </a>
-                </button>
+            <a href="?page={{ page_pokemons.previous_page_number }}" style="text-decoration: none;"><button type="button" class="btn btn-info">
+                    < previous </button> </a>
+            <a href="?page=1" style="text-decoration: none;"> <button type="button" class="btn btn-info">
+                    << first</button> </a>
+
+
 
             {% endif %}
         </div>
