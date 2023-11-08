@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.core.cache import cache
 from django.core.paginator import Paginator 
@@ -11,7 +12,6 @@ import main.battle as battle
 
 # Create your views here.
 def PokemonsCatalog(request):
-    
 
     LIMIT_OF_POKEMONS: int = 6
     if 'search' in request.GET:
@@ -178,6 +178,7 @@ def PokemonBattle(request, pokemon: str = None):
     }
     return render(request, 'main/battle.html', data_2_render)
 
+## ------------------------------ APIv1
 
 from rest_framework import generics
 from rest_framework.response import Response
@@ -270,3 +271,15 @@ class PokemonBattleFastApiView(generics.ListAPIView):
     def get_queryset(self):
         return casts.GetPokemons()
 
+
+
+## ------------------------------ FTP
+
+
+def PokemonSave2FTP(request, pokemon):
+    try:
+        casts.SavePokemon2FTP(pokemon)
+        return JsonResponse({"status": "success"})
+    except:
+        return JsonResponse({"status": "failed"})
+    

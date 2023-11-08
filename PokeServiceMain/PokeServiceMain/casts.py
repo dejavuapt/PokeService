@@ -1,6 +1,9 @@
 import requests
 import typing 
 import random
+from ftplib import FTP
+import PokeServiceMain.settings as settings
+import datetime, io
 
 URL_2_CAST: str = "https://pokeapi.co/api/v2/pokemon"
 
@@ -66,3 +69,18 @@ def FilterPokemonData(pokemons, filter):
         return filtered_pokemons_data
     else:
         return GetPokemonsData(pokemons=pokemons)
+    
+
+def SavePokemon2FTP(pokemon):
+    pokemon_data = GetPokemonData(pokemon)
+    today_folder = str(datetime.date.today()).replace('-','').strip()
+    pokemon_md = f"---\n# Pokemon: {pokemon_data['name'].upper()}\n\n![source]({pokemon_data['picture']}\n---\n### Stats:\n-hp: {pokemon_data['hp']}\n-attack: {pokemon_data['attack']}\n "
+    byted_pokemon_md = pokemon_md.encode('utf-8')
+
+    with FTP(settings.FTP_HOST, settings.FTP_USER, settings.FTP_PASS) as ftp_connect:
+        files = ftp_connect.nlst()
+        if today_folder not in files:
+            ftp_connect.mkd(today_folder)
+        ftp_connect.cwd(today_folder)
+        ftp_connect.storbinary(f"STOR {pokemon_data['name'].upper()}.md", io.BytesIO(byted_pokemon_md))
+        ftp_connect.quit()

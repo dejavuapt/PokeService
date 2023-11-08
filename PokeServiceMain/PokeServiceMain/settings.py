@@ -109,6 +109,10 @@ AUTH_PASSWORD_VALIDATORS = [
 EMAIL:str = os.environ.get('DJANGO_SMTP_EMAIL')
 EMAIL_PASSWORD:str = os.environ.get('DJANGO_SMTP_EMAIL_PASSWORD')
 
+FTP_HOST:str = os.environ.get('DJANGO_FTP_HOST')
+FTP_USER:str = os.environ.get('DJANGO_FTP_USER')
+FTP_PASS:str = os.environ.get('DJANGO_FTP_PASS')
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

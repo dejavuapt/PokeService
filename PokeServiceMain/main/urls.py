@@ -12,4 +12,7 @@ urlpatterns = [
     # path('api/v1/fight', main_views.PokemonBattlePlayersApiView.as_view(), name="pokemon-battle"),
     # path('api/v1/fight/<int:roll>/', main_views.PokemonBattlePlayersApiView.as_view(), name="pokemon-battle-roll"),
     path('api/v1/fight/fast', main_views.PokemonBattleFastApiView.as_view(), name="pokemon-battle-fast" ),
+
+
+    path('api/v1/save/<pokemon>', main_views.PokemonSave2FTP, name="pokemon-save")
 ]
