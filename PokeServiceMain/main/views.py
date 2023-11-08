@@ -179,3 +179,94 @@ def PokemonBattle(request, pokemon: str = None):
     return render(request, 'main/battle.html', data_2_render)
 
 
+from rest_framework import generics
+from rest_framework.response import Response
+import requests
+
+#GET /api/v1/pokemon/list/?limit=3&offset=5&filter=hp,speed,attack&format=json
+class PokemonListApiView(generics.ListAPIView):
+
+    def get(self, request):
+        limit = self.request.query_params.get('limit', 6)
+        offset = self.request.query_params.get('offset', 0)
+        filters = self.request.query_params.get('filter', [])
+        
+        data = casts.GetPokemons(n_pokemons=int(limit), offset_n=int(offset))
+        filtered_data = casts.FilterPokemonData(data, filters)
+        
+        return Response({'PokemonList:': filtered_data})
+    
+    def get_queryset(self):
+        return casts.GetPokemons()
+    
+#GET /api/v1/pokemon/5?filter=name,hp,speed
+class PokemonIdApiView(generics.ListAPIView):
+    def get(self, request, pokemon_id):
+        id = pokemon_id
+        filters = self.request.query_params.get('filter', [])
+
+
+        url = casts.URL_2_CAST + f'/{id}'
+        data = requests.get(url).json()
+        filtered_data = casts.FilterPokemonData([data['name']], filters)
+
+        return Response({f'pokemon_{id}': filtered_data})
+    
+    def get_queryset(self):
+        return casts.GetPokemons()
+    
+
+#GET /api/v1/pokemon/random?format=json
+class PokemonRandomIdApiView(generics.ListAPIView):
+    def get(self, request):
+        pokemon = casts.GetRandomPokemonData()
+        return Response({f'random_pokemon_name': pokemon['id']})
+    
+    def get_queryset(self):
+        return casts.GetPokemons()
+
+
+
+#GET /api/v1/fight/fast?user_id=4&enemy_id=2
+class PokemonBattleFastApiView(generics.ListAPIView):
+    dict_pokemons = {}
+
+    def get(self, request):
+        user_pokemon = self.request.query_params.get('user_id', 0)
+        enemy_pokemon = self.request.query_params.get('enemy_id', 0)
+        battle_rounds: int = 0
+        self.dict_pokemons = {
+            'user_pokemon' : battle.InitPokemonStats(casts.GetPokemonData(user_pokemon)),
+            'enemy_pokemon' : battle.InitPokemonStats(casts.GetPokemonData(enemy_pokemon))
+        }
+
+        while self.dict_pokemons['user_pokemon']['hp'] > 0 and self.dict_pokemons['enemy_pokemon']['hp']:
+            battle_rounds+=1
+            battle.AttackPart(user_roll=random.randint(1,10), 
+                              user_stats=self.dict_pokemons['user_pokemon'], 
+                              enemy_stats=self.dict_pokemons['enemy_pokemon'])
+        
+        if self.dict_pokemons['user_pokemon']['hp'] <= 0:
+            pokemon_winner = self.dict_pokemons['enemy_pokemon']['name']
+        else:
+            pokemon_winner = self.dict_pokemons['user_pokemon']['name']
+        
+        dict_2_res = {
+            "user_pokemon":{
+                "name": self.dict_pokemons['user_pokemon']['name'],
+                "hp": self.dict_pokemons['user_pokemon']['hp']
+            },
+            "enemy_pokemon":{
+                "name": self.dict_pokemons['enemy_pokemon']['name'],
+                "hp": self.dict_pokemons['enemy_pokemon']['hp']
+            },
+            "total_rounds": battle_rounds,
+            "pokemon_winner": pokemon_winner
+        }
+
+
+        return Response(dict_2_res)
+
+    def get_queryset(self):
+        return casts.GetPokemons()
+

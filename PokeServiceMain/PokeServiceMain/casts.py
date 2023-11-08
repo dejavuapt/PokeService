@@ -22,8 +22,9 @@ def GetPokemonData(pokemon: str) -> typing.Dict[str, str]:
     try:
         data_of_response = requests.get(URL_2_CAST + f'/{pokemon}').json()
         return {
-            'name' : pokemon,
-            'picture' : '', #data_of_response['sprites']['front_default']
+            'name' : data_of_response['name'],
+            'id':data_of_response['id'],
+            'picture' : data_of_response['sprites']['front_default'], #
             'back_picture': data_of_response['sprites']['back_default'],
             'height' : data_of_response['height'],
             'weight' : data_of_response['weight'],
@@ -51,3 +52,17 @@ def GetPokemonsData(n_pokemons: int = None, offset_n: int = 0, pokemons: typing.
 
 def GetRandomPokemonData(exception_pokemons: typing.List[str] = []) -> typing.Dict[str, str]:
     return GetPokemonData(random.choice([pokemon for pokemon in GetPokemons() if pokemon not in exception_pokemons]))
+
+
+def FilterPokemonData(pokemons, filter):
+    if filter != []:
+        filter = filter.split(',')
+        filter.insert(0,'name')
+
+        filtered_pokemons_data = []
+        for pokemon in pokemons:
+            pokemon_data = GetPokemonData(pokemon)                
+            filtered_pokemons_data.append({key: pokemon_data[key] for key in filter if key in pokemon_data})
+        return filtered_pokemons_data
+    else:
+        return GetPokemonsData(pokemons=pokemons)

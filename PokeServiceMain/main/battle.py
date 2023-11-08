@@ -38,7 +38,7 @@ def SaveBattleResult(round: int, user_pok:str , enemy_pok:str, winner_pok:str) -
     battle_result.save()
 
 
-def AttackPart(request, user_roll: int, logs_of_battle: typing.List[str], user_stats, enemy_stats) -> None:
+def AttackPart(request = None, user_roll: int = 1, logs_of_battle: typing.List[str] = [], user_stats = None, enemy_stats = None) -> None:
     enemy_roll = random.randint(1, 10)
     logs_of_battle.append(f' | PC roll: {enemy_roll}')
 
@@ -46,12 +46,12 @@ def AttackPart(request, user_roll: int, logs_of_battle: typing.List[str], user_s
         attack_value: int = math.floor(user_stats['attack']*(enemy_stats['defense']/100))
         enemy_stats['hp'] -= attack_value
         logs_of_battle.append(f" | {user_stats['name'].upper()} attacked {enemy_stats['name'].upper()} by {attack_value}")
-        request.session['hitted_object'] = {'is_user': 'false', 'is_enemy': 'true'}
+        if request is not None : request.session['hitted_object'] = {'is_user': 'false', 'is_enemy': 'true'}
     else:
         attack_value: int = math.floor(enemy_stats['attack']*(user_stats['defense']/100))
         user_stats['hp'] -= attack_value
         logs_of_battle.append(f" | {enemy_stats['name'].upper()} attacked {user_stats['name'].upper()} by {attack_value}")
-        request.session['hitted_object'] = {'is_user': 'true', 'is_enemy': 'false'}
+        if request is not None : request.session['hitted_object'] = {'is_user': 'true', 'is_enemy': 'false'}
 
 
 def SendBattleResult(subject:str, to_email:str, body: str):
