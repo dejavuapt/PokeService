@@ -30,6 +30,11 @@ lcd
 get
 ```
 
+## redis connect
+```bash
+sudo service redis-server start
+```
+
 todos:
 - [x] catalog 
 - [x] detailed_pokemon
