@@ -1,4 +1,4 @@
-from django.forms import ModelForm, Form, IntegerField, NumberInput
+from django.forms import ModelForm, Form, IntegerField, NumberInput, EmailField, TextInput
 
 
 class BattleForm(Form):
@@ -9,3 +9,10 @@ class BattleForm(Form):
         required=True,
         widget=NumberInput(attrs={'class': 'form-control'})
     )
+
+class EmailForm(Form):
+    email = EmailField(label="enter the email address to send the results",
+                       required=True,
+                       widget=TextInput(
+                           attrs={'class': 'form-control'}
+                       ))

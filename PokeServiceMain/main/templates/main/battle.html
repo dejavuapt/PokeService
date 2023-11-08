@@ -50,6 +50,7 @@
       </form>
       <form method="post">
         {% csrf_token %}
+        {{ email_form.as_p }}
         <!-- <div class="form-group">
             <label for="attackValue">Enter attack value:</label>
             <input type="number" class="form-control" id="attackValue">

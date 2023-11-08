@@ -61,6 +61,7 @@ def PokemonBattle(request, pokemon: str = None):
     #check if it start
     if request.method != 'POST':
         battle_form = forms.BattleForm()
+        email_form = forms.EmailForm()
         battle_round: int = 0
 
         enemy_pokemon_data = casts.GetRandomPokemonData(exception_pokemons=[pokemon])
@@ -75,6 +76,11 @@ def PokemonBattle(request, pokemon: str = None):
                            [user_pokemon_stats, enemy_pokemon_stats,  battle_round, logs, {'is_user': 'false', 'is_enemy': 'false'}])
 
     elif 'fastnsend' in request.POST:
+        email_form = forms.EmailForm(request.POST)
+        if email_form.is_valid():
+            user_email = email_form.cleaned_data['email']
+        else:
+            user_email = ''
 
         user_pokemon_stats: typing.Dict[str,str] = request.session.get('user_pokemon_stats')
         enemy_pokemon_stats: typing.Dict[str,str] = request.session.get('enemy_pokemon_stats')
@@ -102,6 +108,12 @@ def PokemonBattle(request, pokemon: str = None):
                     'battle_round': battle_round,
                     'battle_logs': request.session.get('logs')
                 }
+
+                if user_email != '':
+                    battle.SendBattleResult(to_email=user_email, 
+                                            body='\n'.join(logs), 
+                                            subject=f"[PokeService] Battle {user_pokemon_stats['name']} vs {enemy_pokemon_stats['name']}")
+
                 return render(request, 'main/battle_end.html', data_2_render)
             
             logs: typing.List[str] = request.session.get('logs')
@@ -113,7 +125,7 @@ def PokemonBattle(request, pokemon: str = None):
                                [ user_pokemon_stats,  enemy_pokemon_stats, battle_round, logs])
 
     else:
-
+        email_form = forms.EmailForm()
         battle_form = forms.BattleForm(request.POST)
         if battle_form.is_valid():
             battle_round = request.session.get('battle_round') + 1
@@ -159,6 +171,7 @@ def PokemonBattle(request, pokemon: str = None):
         'user_pokemon_stats': request.session.get('user_pokemon_stats'),
         'enemy_pokemon_stats': request.session.get('enemy_pokemon_stats'),
         'battle_form': battle_form,
+        'email_form': email_form,
         'battle_round': battle_round,
         'battle_logs': request.session.get('logs'),
         'hitted_object': request.session.get('hitted_object')
