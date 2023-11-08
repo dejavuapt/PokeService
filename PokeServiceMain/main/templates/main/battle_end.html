@@ -14,8 +14,18 @@
     <img src="{% static 'main/img/empty.svg' %}" class="img-fluid" style="width: 300px;" alt="Pokemon 1">
     {% endif %}
   </div>
-
-    <h2> Total rounds: {{ battle_round }}</h2>
+  <div class="row mt-3">
+    <div class="col-md-12">
+      <div id="battleLog" class="bg-light p-3">
+        {% for log in battle_logs %}
+        <p>{{ log }}</p>
+        {% endfor %}
+        <!-- Здесь будут отображаться логи боя -->
+      </div>
+    </div>
   </div>
+</div>
+
+
 
 {% endblock %}

@@ -23,7 +23,7 @@ def GetPokemonData(pokemon: str) -> typing.Dict[str, str]:
         data_of_response = requests.get(URL_2_CAST + f'/{pokemon}').json()
         return {
             'name' : pokemon,
-            'picture' : data_of_response['sprites']['front_default'],
+            'picture' : '', #data_of_response['sprites']['front_default']
             'back_picture': data_of_response['sprites']['back_default'],
             'height' : data_of_response['height'],
             'weight' : data_of_response['weight'],

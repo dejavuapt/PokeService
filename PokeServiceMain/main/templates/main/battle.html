@@ -3,59 +3,86 @@
 
 {% block layout_title %} Round# {{battle_round}} {% endblock %}
 
+
+{% block layout_styles %}
+<link rel="stylesheet" href="{% static 'main/css/battle.css' %}">{% endblock %}
+
 {% block layout_body %}
 
 <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="text-center">
-          <h2>Your pokemon: {{ user_pokemon_stats.name }}</h2>
-          <p>Attack: {{ user_pokemon_stats.attack }}</p>
-          <p>HP: {{ user_pokemon_stats.hp }}/{{ user_pokemon_stats.full_hp }}</p>
-          {% if user_pokemon_stats.back_picture %}
-          <img src="{{ user_pokemon_stats.back_picture }}" class="img-fluid" style="width: 300px;" alt="Pokemon 1">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="text-center">
+        <h2 id="user_name_id" hit="{{ hitted_object.is_user }}">Your pokemon: {{ user_pokemon_stats.name }}</h2>
+        <p>Attack: {{ user_pokemon_stats.attack }}</p>
+        <p>HP: {{ user_pokemon_stats.hp }}/{{ user_pokemon_stats.full_hp }}</p>
+        {% if user_pokemon_stats.back_picture %}
+        <img id="pok_picture_id" src="{{ user_pokemon_stats.back_picture }}" class="img-fluid" style="width: 300px;" alt="Pokemon 1">
 
-          {% else %}
-          <img src="{% static 'main/img/empty.svg' %}" class="img-fluid" style="width: 300px;" alt="Pokemon 1">
-          {% endif %}
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="text-center">
-            {% if enemy_pokemon_stats.picture %}
-            <img src="{{ enemy_pokemon_stats.picture }}" class="img-fluid" style="width: 300px;" alt="Pokemon 2">
-            {% else %}
-            <img src="{% static 'main/img/empty.svg' %}" class="img-fluid" style="width: 300px;" alt="Pokemon 2">
-            {% endif %}
-          <h2>Enemy: {{ enemy_pokemon_stats.name }}</h2>
-          <p>Attack: {{ enemy_pokemon_stats.attack }}</p>
-          <p>HP: {{ enemy_pokemon_stats.hp }}/{{ enemy_pokemon_stats.full_hp }}</p>
-        </div>
+        {% else %}
+        <img id="pok_picture_id" src="{% static 'main/img/empty.svg' %}" class="img-fluid" style="width: 300px;" alt="Pokemon 1">
+        {% endif %}
       </div>
     </div>
-    <div class="row mt-3">
-      <div class="col-md-12 text-center">
-        <form method="post">
-            {% csrf_token %}
-            {{ battle_form.as_p }}
-          <!-- <div class="form-group">
+    <div class="col-md-6">
+      <div class="text-center">
+        {% if enemy_pokemon_stats.picture %}
+        <img id="enem_picture_id" src="{{ enemy_pokemon_stats.picture }}" class="img-fluid" style="width: 300px;" alt="Pokemon 2">
+        {% else %}
+        <img id="enem_picture_id" src="{% static 'main/img/empty.svg' %}" class="img-fluid" style="width: 300px;" alt="Pokemon 2">
+          {% endif %}
+          <h2 id="enemy_name_id" hit="{{ hitted_object.is_enemy }}">Enemy: {{ enemy_pokemon_stats.name }}</h2>
+          <p>Attack: {{ enemy_pokemon_stats.attack }}</p>
+          <p>HP: {{ enemy_pokemon_stats.hp }}/{{ enemy_pokemon_stats.full_hp }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-md-12 text-center">
+      <form method="post">
+        {% csrf_token %}
+        {{ battle_form.as_p }}
+        <!-- <div class="form-group">
             <label for="attackValue">Enter attack value:</label>
             <input type="number" class="form-control" id="attackValue">
           </div> -->
-          <button type="submit" class="btn btn-primary">Attack 👊</button>
-        </form>
+        <button type="submit" class="btn btn-primary">Attack 👊</button>
+      </form>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-md-12">
+      <div id="battleLog" class="bg-light p-3">
+        {% for log in battle_logs %}
+        <p>{{ log }}</p>
+        {% endfor %}
+        <!-- Здесь будут отображаться логи боя -->
       </div>
     </div>
-    <div class="row mt-3">
-        <div class="col-md-12">
-          <div id="battleLog" class="bg-light p-3">
-            {% for log in battle_logs %}
-                <p>{{ log }}</p>
-            {% endfor %}
-            <!-- Здесь будут отображаться логи боя -->
-          </div>
-        </div>
-      </div>
   </div>
+</div>
+
+<script>
+  const enemy_img = document.querySelector("img#enem_picture_id.img-fluid");
+  const user_img = document.querySelector("img#pok_picture_id.img-fluid");
+
+  user_img.addEventListener("animationend", (e) => {
+    user_img.classList.remove("apply-shake");
+  });
+  user_img.addEventListener("animationend", (e) => {
+    user_img.classList.remove("apply-shake");
+  });
+
+  var is_hit_user = document.getElementById('user_name_id').getAttribute('hit');
+  var is_hit_enemy = document.getElementById('enemy_name_id').getAttribute('hit');
+  if (is_hit_enemy == "true") {
+    enemy_img.classList.add("apply-shake");
+  }
+  else if (is_hit_user == "true") {
+    user_img.classList.add("apply-shake");
+  }
+  
+  
+</script>
 
 {% endblock %}

@@ -88,6 +88,8 @@ def PokemonBattle(request, pokemon: str = None):
         request.session['enemy_pokemon_stats'] = enemy_pokemon_stats
         request.session['battle_round'] = battle_round
         request.session['logs'] = logs
+        request.session['hitted_object'] = {'is_user': 'false', 'is_enemy': 'false'}
+
     else:
 
         battle_form = forms.BattleForm(request.POST)
@@ -100,9 +102,6 @@ def PokemonBattle(request, pokemon: str = None):
 
             enemy_roll = random.randint(1, 10)
             logs_of_battle.append(f' | PC roll: {enemy_roll}')
-        
-
-            time_when_attacked = datetime.datetime.now()
             
 
             user_pokemon_stats: typing.Dict[str,str] = request.session.get('user_pokemon_stats')
@@ -112,27 +111,39 @@ def PokemonBattle(request, pokemon: str = None):
                 attack_value: int = math.floor(user_pokemon_stats['attack']*(enemy_pokemon_stats['defense']/100))
                 enemy_pokemon_stats['hp'] -= attack_value
                 logs_of_battle.append(f" | {user_pokemon_stats['name'].upper()} attacked {enemy_pokemon_stats['name'].upper()} by {attack_value}")
+                request.session['hitted_object'] = {'is_user': 'false', 'is_enemy': 'true'}
             else:
                 attack_value: int = math.floor(enemy_pokemon_stats['attack']*(user_pokemon_stats['defense']/100))
                 user_pokemon_stats['hp'] -= attack_value
                 logs_of_battle.append(f" | {enemy_pokemon_stats['name'].upper()} attacked {user_pokemon_stats['name'].upper()} by {attack_value} \n")
+                request.session['hitted_object'] = {'is_user': 'true', 'is_enemy': 'false'}
 
             if user_pokemon_stats['hp'] <= 0 or enemy_pokemon_stats['hp'] <= 0:
 
+                time_end_battle = datetime.datetime.now()
+
+                pokemon_winner = user_pokemon_stats if user_pokemon_stats['hp'] > 0 else enemy_pokemon_stats
+
                 battle_result = models.BattleLog(
-                    battle_date = time_when_attacked,
+                    battle_date = time_end_battle,
                     battle_round = battle_round,
                     user_pokemon = user_pokemon_stats['name'],
                     enemy_pokemon = enemy_pokemon_stats['name'],
-                    battle_round_winner = user_pokemon_stats['name'] if user_pokemon_stats['hp'] > 0 else enemy_pokemon_stats['name']
+                    battle_round_winner = pokemon_winner['name']
                 )
                 battle_result.save()
 
+                logs: typing.List[str] = request.session.get('logs')
+                logs.append("".join(logs_of_battle))
+                logs.append(f"[LOG] Battle end! Congratulation {pokemon_winner['name'].upper()}!")
+                request.session['logs'] = logs
+
+
                 data_2_render: dict = {
-                    'winner': user_pokemon_stats if user_pokemon_stats['hp'] > 0 else enemy_pokemon_stats,
-                    'battle_round': battle_round
+                    'winner': pokemon_winner,
+                    'battle_round': battle_round,
+                    'battle_logs': request.session.get('logs')
                 }
-                print('winner')
                 return render(request, 'main/battle_end.html', data_2_render)
 
             logs: typing.List[str] = request.session.get('logs')
@@ -144,12 +155,14 @@ def PokemonBattle(request, pokemon: str = None):
             request.session['logs'] = logs
 
 
+    print( request.session.get('hitted_object'))
     data_2_render: dict = {
         'user_pokemon_stats': request.session.get('user_pokemon_stats'),
         'enemy_pokemon_stats': request.session.get('enemy_pokemon_stats'),
         'battle_form': battle_form,
         'battle_round': battle_round,
-        'battle_logs': request.session.get('logs')
+        'battle_logs': request.session.get('logs'),
+        'hitted_object': request.session.get('hitted_object')
     }
     return render(request, 'main/battle.html', data_2_render)
 
