@@ -29,7 +29,7 @@ todos:
 - [x] battle v0.2.4
     - [x] fast battle v0.3.1 | +[x]add logs in battle_end screen \ [x]shake pokemon
     - [x] send battle result on email v0.3.2
-- [ ] refactoring v0.3.3
-- [ ] git merging v0.4.1
+- [/] refactoring v0.3.3
+- [x] git merging v0.4.1
 - [ ] FTP v0.4.2
 - [ ] Docker v0.5
