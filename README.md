@@ -40,4 +40,5 @@ todos:
 - [/] refactoring v0.3.3
 - [x] git merging v0.4.1
 - [x] FTP v0.4.2
-- [ ] Docker v0.5
+- [ ] Redis v0.5
+- [ ] Docker v0.6
