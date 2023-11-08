@@ -225,7 +225,93 @@ class PokemonRandomIdApiView(generics.ListAPIView):
     def get_queryset(self):
         return casts.GetPokemons()
 
+#GET /api/v1/fight?user_id=4&enemy_id=2
+class PokemonBattlePlayersApiView(generics.ListAPIView):
+    dict_pokemons = {}
 
+    def get(self, request,  *args, **kwargs):
+        user_pokemon = self.request.query_params.get('user_id', 0)
+        enemy_pokemon = self.request.query_params.get('enemy_id', 0)
+        self.dict_pokemons = {
+            'user_pokemon' : battle.InitPokemonStats(casts.GetPokemonData(user_pokemon)),
+            'enemy_pokemon' : battle.InitPokemonStats(casts.GetPokemonData(enemy_pokemon)),
+            'round': 0
+        }
+        serializer = PokemonSerializer(self.dict_pokemons)
+        return Response(serializer.data)
+
+    #POST /api/v1/fight/5?user_id=4&enemy_id=2
+    def post(self, request, roll):
+        user_roll = roll
+        serializer = PokemonSerializer(data = request.data)
+        if serializer.is_valid(): print(serializer.data)
+        self.dict_pokemons = {
+            'user_pokemon' : battle.InitPokemonStats(casts.GetPokemonData(serializer.data['user_pokemon'])),
+            'enemy_pokemon' : battle.InitPokemonStats(casts.GetPokemonData(serializer.data['enemy_pokemon'])),
+            'round': 0
+        }
+        if self.dict_pokemons != {}:
+            battle.AttackPart(user_roll=user_roll, 
+                              user_stats=self.dict_pokemons['user_pokemon'], 
+                              enemy_stats=self.dict_pokemons['enemy_pokemon'])
+        
+            if self.dict_pokemons['user_pokemon']['hp'] <= 0 or self.dict_pokemons['enemy_pokemon']['hp'] <= 0:
+                if self.dict_pokemons['user_pokemon']['hp'] <= 0:
+                    pokemon_winner = self.dict_pokemons['enemy_pokemon']['name']
+                else:
+                    pokemon_winner = self.dict_pokemons['user_pokemon']['name']
+
+                dict_2_res = {
+                    "user_pokemon":{
+                        "name": self.dict_pokemons['user_pokemon']['name'],
+                        "hp": self.dict_pokemons['user_pokemon']['hp'],
+                        "full_hp": self.dict_pokemons['user_pokemon']['full_hp']
+                    },
+                    "enemy_pokemon":{
+                        "name": self.dict_pokemons['enemy_pokemon']['name'],
+                        "hp": self.dict_pokemons['enemy_pokemon']['hp'],
+                        "full_hp": self.dict_pokemons['enemy_pokemon']['full_hp']
+                    },
+                    "total_rounds": self.dict_pokemons['round'],
+                    "pokemon_winner": pokemon_winner
+                }
+                return Response(dict_2_res)
+            
+            self.dict_pokemons['round'] += 1
+            dict_2_res = {
+                "user_pokemon":{
+                    "name": self.dict_pokemons['user_pokemon']['name'],
+                    "hp": self.dict_pokemons['user_pokemon']['hp'],
+                    "full_hp": self.dict_pokemons['user_pokemon']['full_hp']
+                },
+                "enemy_pokemon":{
+                    "name": self.dict_pokemons['enemy_pokemon']['name'],
+                    "hp": self.dict_pokemons['enemy_pokemon']['hp'],
+                    "full_hp": self.dict_pokemons['enemy_pokemon']['full_hp']
+                },
+                "current_round": self.dict_pokemons['round']
+            }
+            return Response(dict_2_res)
+        
+        return Response({"":""})
+    
+    def get_serializer_class(self):
+        return PokemonSerializer
+  
+    def get_queryset(self):
+        return casts.GetPokemons()
+    
+
+        
+
+
+from rest_framework import serializers
+
+class PokemonSerializer(serializers.Serializer):
+    # Define your serializer fields here
+    user_pokemon = serializers.CharField()
+    enemy_pokemon = serializers.CharField()
+    # Other fields
 
 #GET /api/v1/fight/fast?user_id=4&enemy_id=2
 class PokemonBattleFastApiView(generics.ListAPIView):
