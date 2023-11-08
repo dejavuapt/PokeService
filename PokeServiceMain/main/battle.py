@@ -48,3 +48,4 @@ def AttackPart(request, user_roll: int, logs_of_battle: typing.List[str], user_s
         user_stats['hp'] -= attack_value
         logs_of_battle.append(f" | {enemy_stats['name'].upper()} attacked {user_stats['name'].upper()} by {attack_value} \n")
         request.session['hitted_object'] = {'is_user': 'true', 'is_enemy': 'false'}
+

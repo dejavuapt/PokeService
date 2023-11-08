@@ -48,6 +48,14 @@
           </div> -->
         <button type="submit" class="btn btn-primary">Attack 👊</button>
       </form>
+      <form method="post">
+        {% csrf_token %}
+        <!-- <div class="form-group">
+            <label for="attackValue">Enter attack value:</label>
+            <input type="number" class="form-control" id="attackValue">
+          </div> -->
+        <button type="submit" class="btn btn-primary" name="fastnsend">Fast & Send 📧</button>
+      </form>
     </div>
   </div>
   <div class="row mt-3">

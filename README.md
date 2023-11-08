@@ -20,7 +20,7 @@ todos:
 - [x] detailed_pokemon
 - [x] search -> [ ] bug when you tried go to next page in searced pokemons
 - [x] battle v0.2.4
-    - [ ] fast battle v0.3.1 | +[x]add logs in battle_end screen \ [x]shake pokemon
+    - [x] fast battle v0.3.1 | +[x]add logs in battle_end screen \ [x]shake pokemon
     - [ ] send battle result on email v0.3.2
 - [ ] refactoring v0.3.3
 - [ ] git merging v0.4.1

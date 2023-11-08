@@ -74,6 +74,44 @@ def PokemonBattle(request, pokemon: str = None):
                            ['user_pokemon_stats', 'enemy_pokemon_stats', 'battle_round', 'logs', 'hitted_object'],
                            [user_pokemon_stats, enemy_pokemon_stats,  battle_round, logs, {'is_user': 'false', 'is_enemy': 'false'}])
 
+    elif 'fastnsend' in request.POST:
+
+        user_pokemon_stats: typing.Dict[str,str] = request.session.get('user_pokemon_stats')
+        enemy_pokemon_stats: typing.Dict[str,str] = request.session.get('enemy_pokemon_stats')
+        battle_round = request.session.get('battle_round') + 1
+        
+
+        while user_pokemon_stats['hp'] > 0 and enemy_pokemon_stats['hp'] > 0:
+            logs_of_battle: typing.List[str] = [f'[LOG] Round #{battle_round}']
+
+            user_roll = random.randint(1, 10)
+            logs_of_battle.append(f' | PC roll: {user_roll}')
+
+            battle.AttackPart(request, user_roll, logs_of_battle, user_pokemon_stats, enemy_pokemon_stats)
+
+            if user_pokemon_stats['hp'] <= 0 or enemy_pokemon_stats['hp'] <= 0:
+                pokemon_winner = user_pokemon_stats if user_pokemon_stats['hp'] > 0 else enemy_pokemon_stats
+                battle.SaveBattleResult(battle_round, user_pokemon_stats['name'], enemy_pokemon_stats['name'], pokemon_winner['name'])
+                logs: typing.List[str] = request.session.get('logs')
+                logs.append("".join(logs_of_battle))
+                logs.append(f"[LOG] Battle end! Congratulation {pokemon_winner['name'].upper()}!")
+                request.session['logs'] = logs
+            
+                data_2_render: dict = {
+                    'winner': pokemon_winner,
+                    'battle_round': battle_round,
+                    'battle_logs': request.session.get('logs')
+                }
+                return render(request, 'main/battle_end.html', data_2_render)
+            
+            logs: typing.List[str] = request.session.get('logs')
+            logs.append("".join(logs_of_battle))
+
+            battle_round+=1
+            battle.SyncSession(request,
+                               ['user_pokemon_stats', 'enemy_pokemon_stats', 'battle_round', 'logs'], 
+                               [ user_pokemon_stats,  enemy_pokemon_stats, battle_round, logs])
+
     else:
 
         battle_form = forms.BattleForm(request.POST)
