@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'battle_log_db',
         'USER': 'postgres',
         'PASSWORD': 'postgres123',
-        'HOST': 'localhost',
+        'HOST': 'poke-db',
         'PORT': '5432'
     }
 }
@@ -109,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://poke-redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         }
