@@ -1,13 +1,20 @@
-![pikachu](https://giphy.com/embed/7ISIRaCMrgFfa)
+<p align="center">
+<img src="https://media2.giphy.com/media/AWByzGyay2cboRjTWE/giphy.gif?cid=ecf05e47njts4nnq69uo8j8uu2v3t6kxin09s6qrdpnaswhf&ep=v1_gifs_related&rid=giphy.gif&ct=g" width="200">
+</p>
+
+<h1 align="center">POKESERVICE</h1>
+
+<p align="center">
+    <img src="https://skillicons.dev/icons?i=git,docker,django,python,bootstrap" />
+</p>
+
+This web service is being developed within the framework of the Open Technologies discipline. The project is a Pokemon catalog and a RESTFUL API through the [pokeapi](https://pokeapi.co/) service.
 
 
-# PokeService 
+<h2 align="center">Docker run (debian):</h2>
 
 
-
-## Docker run (debian):
-
-1. Create Envariables.
+1. **Create Envariables.**
 
 - DJANGO VARIABLES
 ```bash
@@ -44,14 +51,13 @@ POSTGRES_DB=$nameofdb
 ```
 Ctrl+D
 
-2. Run by docker compose
+2. **Run by docker compose**
 ```bash
 docker compose up -d
 ```
----
-## Extra:
+<h2 align="center">Extra</h2>
 
-Show datas:
+**Show datas:**
 ```bash
 docker ps -a
 docker exec -it [CONTAINER_ID_POSTGRES] bash
@@ -59,7 +65,7 @@ psql -U [USER_NAME] [DB_NAME]
 SELECT * FROM [TABLE_NAME] ORDER BY id DESC LIMIT 10;
 ```
 
-Ftp connect:
+**Ftp connect:**
 ```bash
 ftp -p 127.0.0.1
 [AUTH YOUR NAME AND PASSWORD]
@@ -67,14 +73,14 @@ lcd
 get ...
 ```
 
----
-## To product:
+<h2 align="center">Use image of docker</h2>
+
 1. Copy docker-compose.yml
 2. Change in poke-django ["build: ." -> "image: dejavuapt/pokeservice"]
 3. Create variables files. Part **"Docker run. 1p"**
 
----
-## Todos:
+<h2 align="center">Todos</h2>
+
 - [x] catalog 
 - [x] detailed_pokemon
 - [x] search -> [ ] bug when you tried go to next page in searced pokemons
@@ -86,9 +92,10 @@ get ...
 - [x] FTP v0.4.2
 - [x] Redis v0.5
 - [x] Docker v0.6
+- [ ] Testing v0.7
 
 
----
+
 ## Resources
 
 [Docker image of django-project](https://hub.docker.com/r/dejavuapt/pokeservice)
