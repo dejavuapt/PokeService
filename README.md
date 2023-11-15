@@ -83,3 +83,9 @@ get ...
 - [x] FTP v0.4.2
 - [x] Redis v0.5
 - [x] Docker v0.6
+
+
+---
+## Resources
+
+[Docker image of django-project](https://hub.docker.com/r/dejavuapt/pokeservice)
