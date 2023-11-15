@@ -1,0 +1,59 @@
+version: '3.7'
+
+services:
+  poke-ftp:
+    image: delfer/alpine-ftp-server
+    ports:
+      - 21:21
+      - 21000-21010:21000-21010
+    env_file:
+      - ftp_variables.env
+    volumes:
+      - /opt/djangoftp:/ftp/djangoftp
+    networks:
+      - pokenet
+  poke-redis:
+    image: redis
+    container_name: poke-redis
+    restart: unless-stopped
+    networks:
+      - pokenet
+    ports:
+      - 6379:6379
+    volumes:
+      - /opt/redis:/usr/local/etc/redis
+  poke-db:
+    image: postgres
+    container_name: poke-postgres
+    restart: unless-stopped
+    volumes:
+      - /opt/postgresql:/var/lib/postgresql/data
+    env_file:
+      - psql_variables.env
+    networks:
+      - pokenet
+  poke-django:
+    build: .
+    container_name: poke
+    restart: unless-stopped
+    command: bash /usr/src/pokeservice/startup_script.sh
+    volumes:
+      - .:/usr/src/pokeservice
+    ports:
+      - 8000:8000
+    depends_on:
+      - poke-db
+      - poke-redis
+      - poke-ftp
+    networks:
+      - pokenet
+      - internet
+    env_file:
+      - dj_variables.env
+networks:
+  internet:
+    name: internet
+    driver: bridge
+  pokenet:
+    name: pokenet
+    driver: bridge

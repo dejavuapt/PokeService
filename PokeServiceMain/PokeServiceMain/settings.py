@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'battle_log_db',
         'USER': 'postgres',
         'PASSWORD': 'postgres123',
-        'HOST': 'localhost',
+        'HOST': 'poke-db',
         'PORT': '5432'
     }
 }
@@ -109,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://poke-redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         }
@@ -122,6 +122,8 @@ EMAIL_PASSWORD:str = os.environ.get('DJANGO_SMTP_EMAIL_PASSWORD')
 FTP_HOST:str = os.environ.get('DJANGO_FTP_HOST')
 FTP_USER:str = os.environ.get('DJANGO_FTP_USER')
 FTP_PASS:str = os.environ.get('DJANGO_FTP_PASS')
+
+print(f"[{FTP_HOST}, {FTP_USER}, {FTP_PASS}]")
 
 
 # Internationalization
