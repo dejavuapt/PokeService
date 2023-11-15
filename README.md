@@ -2,40 +2,76 @@
 
 ---
 
+## Docker run (debian):
+
+1. Create Envariables.
+
+- DJANGO VARIABLES
 ```bash
-python3 -m venv env
-source env/bin/activate
-(env) pip install -r requirements.txt
+cat > dj_variables.env
+```
+Copy and paste next with your's variables:
+```
+DJANGO_SMTP_EMAIL=$email.mail.ru
+DJANGO_SMTP_EMAIL_PASSWORD=$mailpassword
+DJANGO_FTP_HOST=poke-ftp
+DJANGO_FTP_USER=$yourusername
+DJANGO_FTP_PASS=$password
+```
+Ctrl+D
+
+- FTP VARIABLES
+```bash
+cat > ftp_variables.env
+```
+Copy and paste next with your's variables:
+```
+USERS="$yourusername|$password"
+```
+Ctrl+D
+
+- POSTGRESQL VARIABLES
+```bash
+cat > psql_variables.env
+```
+Copy and paste next with your's variables:
+```
+POSTGRES_PASSWORD=$passwordofpostgre
+POSTGRES_DB=$nameofdb
+```
+Ctrl+D
+
+2. Run by docker compose
+```bash
+docker compose up -d
+```
+---
+## Extra:
+
+Show datas:
+```bash
+docker ps -a
+docker exec -it [CONTAINER_ID_POSTGRES] bash
+psql -U [USER_NAME] [DB_NAME]
+SELECT * FROM [TABLE_NAME] ORDER BY id DESC LIMIT 10;
 ```
 
-## Show datas 
+Ftp connect:
 ```bash
-service postgresql start
--u postgres psql battle_log_db
-SELECT * FROM main_battlelog ORDER BY id DESC LIMIT 10;
-```
-
-## Set email&password. Smtp - mail.ru
-```bash
-(env) export DJANGO_SMTP_EMAIL='$youremail' && export DJANGO_SMTP_EMAIL_PASSWORD='$yourpassword'
-```
-
-## ftp connect
-```bash
-(env) export DJANGO_FTP_HOST='$yourhost' && export DJANGO_FTP_USER='$yourname' && export DJANGO_FTP_PASS='$yourpssw'
-service vsftpd start
 ftp -p 127.0.0.1
-
+[AUTH YOUR NAME AND PASSWORD]
 lcd
-get
+get ...
 ```
 
-## redis connect
-```bash
-sudo service redis-server start
-```
+---
+## To product:
+1. Copy docker-compose.yml
+2. Change in poke-django ["build: ." -> "image: dejavuapt/pokeservice"]
+3. Create variables files. Part **"Docker run. 1p"**
 
-todos:
+---
+## Todos:
 - [x] catalog 
 - [x] detailed_pokemon
 - [x] search -> [ ] bug when you tried go to next page in searced pokemons
@@ -46,4 +82,4 @@ todos:
 - [x] git merging v0.4.1
 - [x] FTP v0.4.2
 - [x] Redis v0.5
-- [ ] Docker v0.6
+- [x] Docker v0.6

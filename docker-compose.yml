@@ -1,6 +1,17 @@
 version: '3.7'
 
 services:
+  poke-ftp:
+    image: delfer/alpine-ftp-server
+    ports:
+      - 21:21
+      - 21000-21010:21000-21010
+    env_file:
+      - ftp_variables.env
+    volumes:
+      - /opt/djangoftp:/ftp/djangoftp
+    networks:
+      - pokenet
   poke-redis:
     image: redis
     container_name: poke-redis
@@ -9,15 +20,16 @@ services:
       - pokenet
     ports:
       - 6379:6379
+    volumes:
+      - /opt/redis:/usr/local/etc/redis
   poke-db:
     image: postgres
     container_name: poke-postgres
     restart: unless-stopped
     volumes:
       - /opt/postgresql:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=postgres123
-      - POSTGRES_DB=battle_log_db
+    env_file:
+      - psql_variables.env
     networks:
       - pokenet
   poke-django:
@@ -32,12 +44,12 @@ services:
     depends_on:
       - poke-db
       - poke-redis
+      - poke-ftp
     networks:
       - pokenet
       - internet
-    environment:
-      - DJANGO_SMTP_EMAIL=your@mail.ru
-      - DJANGO_SMTP_EMAIL_PASSWORD=yourpassword
+    env_file:
+      - dj_variables.env
 networks:
   internet:
     name: internet

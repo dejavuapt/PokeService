@@ -13,7 +13,3 @@ COPY ./requirements.txt /usr/src/pokeservice/requirements.txt
 RUN pip install -r /usr/src/pokeservice/requirements.txt
 
 COPY . /usr/src/pokeservice/
-
-CMD ["python", "./PokeServiceMain/manage.py", "migrate"]
-
-# CMD [ "python", "./PokeServiceMain/manage.py", "runserver", "0.0.0.0:8000" ]

@@ -123,6 +123,8 @@ FTP_HOST:str = os.environ.get('DJANGO_FTP_HOST')
 FTP_USER:str = os.environ.get('DJANGO_FTP_USER')
 FTP_PASS:str = os.environ.get('DJANGO_FTP_PASS')
 
+print(f"[{FTP_HOST}, {FTP_USER}, {FTP_PASS}]")
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
