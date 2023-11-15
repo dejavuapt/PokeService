@@ -77,7 +77,7 @@ get ...
 
 1. Copy docker-compose.yml
 2. Change in poke-django ["build: ." -> "image: dejavuapt/pokeservice"]
-3. Create variables files. Part **"Docker run. 1p"**
+3. Create variables files. [Previous part](https://github.com/dejavuapt/PokeService/tree/pokeservice-v0.6#docker-run-debian)
 
 <h2 align="center">Todos</h2>
 
