@@ -1,3 +1,6 @@
 /env
 /drogon
 /.vscode
+dj_variables.env
+psql_variables.env
+ftp_variables.env
