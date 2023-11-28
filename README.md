@@ -93,6 +93,9 @@ get ...
 - [x] Redis v0.5
 - [x] Docker v0.6
 - [ ] Testing v0.7
+- [ ] OAuth v0.8
+    - [ ] classic v0.8.1
+    - [ ] Auth by 2account v0.8.2
 
 
 
