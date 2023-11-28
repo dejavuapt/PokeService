@@ -1,0 +1,9 @@
+dj_variables.env
+ftp_variables.env
+psql_variables.env
+/env
+/.vscode
+docker-compose.yml
+Dockerfile
+.git
+.gitignore
