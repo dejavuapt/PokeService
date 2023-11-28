@@ -116,6 +116,10 @@ CACHES = {
     }
 }
 
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
+
 EMAIL:str = os.environ.get('DJANGO_SMTP_EMAIL')
 EMAIL_PASSWORD:str = os.environ.get('DJANGO_SMTP_EMAIL_PASSWORD')
 

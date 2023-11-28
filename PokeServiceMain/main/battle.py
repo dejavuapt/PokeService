@@ -4,6 +4,7 @@ from email.message import EmailMessage
 from email.mime.text import MIMEText
 import ssl, smtplib 
 import PokeServiceMain.settings as main_settings
+import PokeServiceMain.casts as casts
 
 
 def InitPokemonStats(pokemon_data: typing.Dict[str,str]) -> typing.Dict[str,str]:
@@ -52,6 +53,34 @@ def AttackPart(request = None, user_roll: int = 1, logs_of_battle: typing.List[s
         user_stats['hp'] -= attack_value
         logs_of_battle.append(f" | {enemy_stats['name'].upper()} attacked {user_stats['name'].upper()} by {attack_value}")
         if request is not None : request.session['hitted_object'] = {'is_user': 'true', 'is_enemy': 'false'}
+
+
+def GetResultFastBattle(user_pokemon_id: str = None, enemy_pokemon_id: str = None) -> typing.Dict[str,str]:
+    battle_rounds: int = 0
+    dict_pokemons = {
+        'user_pokemon' : InitPokemonStats(casts.GetPokemonData(user_pokemon_id)),
+        'enemy_pokemon' : InitPokemonStats(casts.GetPokemonData(enemy_pokemon_id))
+    }
+
+    while dict_pokemons['user_pokemon']['hp'] > 0 and dict_pokemons['enemy_pokemon']['hp']:
+        battle_rounds+=1
+        AttackPart(user_roll=random.randint(1,10), 
+                              user_stats=dict_pokemons['user_pokemon'], 
+                              enemy_stats=dict_pokemons['enemy_pokemon'])
+        
+        if dict_pokemons['user_pokemon']['hp'] <= 0:
+            pokemon_winner = dict_pokemons['enemy_pokemon']['name']
+        else:
+            pokemon_winner = dict_pokemons['user_pokemon']['name']
+        
+        dict_2_res = {
+            "user_pokemon": dict_pokemons['user_pokemon']['name'],
+            "enemy_pokemon": dict_pokemons['enemy_pokemon']['name'],
+            "total_rounds": str(battle_rounds),
+            "pokemon_winner": str(pokemon_winner)
+        }
+
+    return dict_2_res
 
 
 def SendBattleResult(subject:str, to_email:str, body: str):
