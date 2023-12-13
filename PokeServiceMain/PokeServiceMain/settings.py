@@ -72,6 +72,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'PokeServiceMain.wsgi.application'
 
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
