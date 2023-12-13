@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from main.models import Pokemon
+from main.models import BattleLog
 
 
-class PokemonSerializer(serializers.ModelSerializer):
+class SerializerBattleLog(serializers.ModelSerializer):
     class Meta:
-        model = Pokemon
-        fields = ['name', 'poke_id', 'picture_url', 'back_picture_url',
-                  'height', 'weight', 'hp', 'attack', 'defense', 'speed',
-                  'types_of_attack']
+        model = BattleLog
+        fields = ['first_pokemon_id',
+                  'second_pokemon_id',
+                  'first_pokemon_roll']
 
 

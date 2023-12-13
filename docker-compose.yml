@@ -36,7 +36,6 @@ services:
     build: .
     container_name: poke
     restart: unless-stopped
-    command: bash /usr/src/pokeservice/startup_script.sh
     volumes:
       - .:/usr/src/pokeservice
     ports:

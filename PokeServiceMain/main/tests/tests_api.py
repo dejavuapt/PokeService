@@ -37,3 +37,13 @@ class PokemonsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content), {"status": "success"})
 
+    def test_BattleInfo(self):
+        url = '/api/v2/battle?user_id=4&enemy_id=2'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        equals_data = ["charmander", "ivysaur"]
+        self.assertIn(json.loads(response.content)["pokemon1"]["name"], equals_data)
+        self.assertIn(json.loads(response.content)["pokemon2"]["name"], equals_data)
+
+

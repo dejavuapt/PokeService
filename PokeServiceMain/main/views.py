@@ -221,7 +221,25 @@ class PokemonBattleFastApi2View(APIView):
             enemy_pokemon = casts.GetRandomPokemonData()["id"]
         return JsonResponse(battle.GetResultFastBattle(user_pokemon, enemy_pokemon), safe=False)
 
+#GET /api/v2/battle?user_id=4&enemy_id=2
+class PokemonBattleInfoApi2View(APIView):
+    def get(self, request):
+        user_pokemon = request.query_params.get('user_id', 0)
+        enemy_pokemon = request.query_params.get('enemy_id', None)
+        if not enemy_pokemon:
+            enemy_pokemon = casts.GetRandomPokemonData()["id"]
+        battle_info = {
+            "pokemon1": casts.GetPokemonData(user_pokemon),
+            "pokemon2": casts.GetPokemonData(enemy_pokemon)
+        }
+        return JsonResponse(battle_info, safe=False)
 
+from main.serializers import SerializerBattleLog
+
+class PokemonBattleLogRoundApi2View(APIView):
+    def post(self, request, format=None):
+        serializer = SerializerBattleLog(data=request.data)
+        # TODO
 
 ## ------------------------------ FTP
 
