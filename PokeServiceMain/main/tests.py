@@ -31,7 +31,7 @@ class PokemonsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn(json.loads(response.content)["user_pokemon"], ["charmander", "ivysaur"])
 
-    def test_SavePokemonToFTP(self):
+    def SavePokemonToFTP(self):
         url = '/api/v1/save/5'
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)

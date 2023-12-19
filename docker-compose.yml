@@ -6,12 +6,14 @@ services:
     ports:
       - 21:21
       - 21000-21010:21000-21010
-    env_file:
-      - ftp_variables.env
+    # env_file:
+    #   - ftp_variables.env
     volumes:
       - /opt/djangoftp:/ftp/djangoftp
     networks:
       - pokenet
+    environment:
+      - USERS
   poke-redis:
     image: redis
     container_name: poke-redis
@@ -28,10 +30,13 @@ services:
     restart: unless-stopped
     volumes:
       - /opt/postgresql:/var/lib/postgresql/data
-    env_file:
-      - psql_variables.env
+    # env_file:
+    #   - psql_variables.env
     networks:
       - pokenet
+    environment:
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
   poke-grafana:
     image: grafana/grafana-oss
     container_name: poke-grafana
@@ -62,8 +67,14 @@ services:
     networks:
       - pokenet
       - internet
-    env_file:
-      - dj_variables.env
+    # env_file:
+    #   - dj_variables.env
+    environment:
+      - DJANGO_SMTP_EMAIL
+      - DJANGO_SMTP_EMAIL_PASSWORD
+      - DJANGO_FTP_HOST
+      - DJANGO_FTP_USER
+      - DJANGO_FTP_PASS
 networks:
   internet:
     name: internet
