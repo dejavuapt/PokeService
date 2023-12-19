@@ -16,7 +16,7 @@
     <div class="row">
         <div class="col">
             {% if page_pokemons.has_next %}
-            <a href="?page={{ page_pokemons.next_page_number }}" style="text-decoration: none;"> <button type="button" class="btn btn-info">next
+            <a href="?page={{ page_pokemons.next_page_number }}" style="text-decoration: none;"> <button type="button" class="btn btn-info next">next
                     ></button> </a>
             <a href="?page={{ page_pokemons.paginator.num_pages }}" style="text-decoration: none;"> <button type="button" class="btn btn-info">last
                     >></button>
@@ -72,6 +72,8 @@
             {% endif %}
         </div>
     </div>
+    
+
 </div>
 
 

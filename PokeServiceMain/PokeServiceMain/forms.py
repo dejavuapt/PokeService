@@ -1,4 +1,7 @@
-from django.forms import ModelForm, Form, IntegerField, NumberInput, EmailField, TextInput
+from django.forms import ModelForm, Form, IntegerField, NumberInput, EmailField, TextInput, CharField, PasswordInput
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User,  AbstractBaseUser
+from django.db.models import EmailField as dbEmailField
 
 
 class BattleForm(Form):
@@ -16,3 +19,18 @@ class EmailForm(Form):
                        widget=TextInput(
                            attrs={'class': 'form-control'}
                        ))
+    
+
+class CreateUserForm(UserCreationForm):
+    email = EmailField(required=True)
+    class Meta:
+        model = User
+        fields = {"username", "email", "password1", "password2"}
+
+class LoginUserForm(Form):
+    username = CharField()
+    email = EmailField()
+    password = CharField(widget=PasswordInput)
+
+class CodeConfirmForm(Form):
+    code = CharField()

@@ -41,6 +41,9 @@ def GetPokemonData(pokemon: str) -> typing.Dict[str, str]:
         print(http_error)
         return {}
     
+def SaveModelPokemonData(pokemon: str) -> None:
+    pass
+    
 def GetPokemonsData(n_pokemons: int = None, offset_n: int = 0, pokemons: typing.List[str] = None) -> typing.List[dict]:
     try:
         if(pokemons == None and n_pokemons != None ):

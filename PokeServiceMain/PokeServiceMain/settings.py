@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'social_django'
 ]
 
 MIDDLEWARE = [
@@ -57,7 +60,7 @@ ROOT_URLCONF = 'PokeServiceMain.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,6 +119,11 @@ CACHES = {
     }
 }
 
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL:str = os.environ.get('DJANGO_SMTP_EMAIL')
 EMAIL_PASSWORD:str = os.environ.get('DJANGO_SMTP_EMAIL_PASSWORD')
 
@@ -149,3 +157,37 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # или другой способ хранения сессий, какой вам нужен
+SESSION_COOKIE_NAME = 'my_session'  # Название куки для сессии
+
+LOGIN_REDIRECT_URL = reverse_lazy("profile")
+
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+
+# SOCIAL_AUTH_POSTGRES_JSONFIELD_ENABLED = True
+
+SOCIAL_AUTH_GITHUB_KEY = 'a7be1910d3800e0f0677'
+SOCIAL_AUTH_GITHUB_SECRET = '9be80bac6e3ba23c931d531454489b76e3d103e3'
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'

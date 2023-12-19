@@ -1,0 +1,29 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block layout_title %} Статистика {% endblock %}
+
+{% block layout_content_navbar%}
+
+{% endblock %}
+
+{% block layout_body %}
+
+<div style="text-align: center; padding-top: 10px;">
+<div>
+<iframe src="http://localhost:3000/d-solo/f3ae6a72-880f-4bc7-9425-f9e7840bf9d6/total?orgId=1&from=1702987252869&to=1703008852870&theme=light&panelId=1" width="700" height="120" frameborder="0"></iframe>
+</div>
+
+<div>
+<iframe src="http://localhost:3000/d-solo/e0c4c356-8bc1-4176-ab4d-2a56d6716b6f/top5?orgId=1&from=1702987515417&to=1703009115417&theme=light&panelId=1" width="450" height="270" frameborder="0"></iframe>
+</div>
+
+<div>
+<iframe src="http://localhost:3000/d-solo/e463897f-d723-4b9e-9e3d-c18140de8286/2weekcountboo?orgId=1&from=1700417242260&to=1703009242261&theme=light&panelId=1" width="700" height="300" frameborder="0"></iframe>
+</div>
+
+<div>
+<iframe src="http://localhost:3000/d-solo/f26fbf3e-9870-42bf-ad5b-ad47ac93b6e8/2weeksrounds?orgId=1&from=1700417367106&to=1703009367106&theme=light&panelId=1" width="700" height="300" frameborder="0"></iframe>
+</div>
+</div>
+{% endblock %}

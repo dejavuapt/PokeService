@@ -1,3 +1,4 @@
+import string
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.core.cache import cache
@@ -96,8 +97,11 @@ def PokemonBattle(request, pokemon: str = None):
             battle.AttackPart(request, user_roll, logs_of_battle, user_pokemon_stats, enemy_pokemon_stats)
 
             if user_pokemon_stats['hp'] <= 0 or enemy_pokemon_stats['hp'] <= 0:
+                current_user_id = request.user.id
+                if not current_user_id:
+                    current_user_id = 'None'
                 pokemon_winner = user_pokemon_stats if user_pokemon_stats['hp'] > 0 else enemy_pokemon_stats
-                battle.SaveBattleResult(battle_round, user_pokemon_stats['name'], enemy_pokemon_stats['name'], pokemon_winner['name'])
+                battle.SaveBattleResult(current_user_id, battle_round, user_pokemon_stats['name'], enemy_pokemon_stats['name'], pokemon_winner['name'])
                 logs: typing.List[str] = request.session.get('logs')
                 logs.append("".join(logs_of_battle))
                 logs.append(f"[LOG] Battle end! Congratulation {pokemon_winner['name'].upper()}!")
@@ -140,9 +144,12 @@ def PokemonBattle(request, pokemon: str = None):
             battle.AttackPart(request, user_roll, logs_of_battle, user_pokemon_stats, enemy_pokemon_stats)
 
             if user_pokemon_stats['hp'] <= 0 or enemy_pokemon_stats['hp'] <= 0:
+                current_user_id = request.user.id
+                if not current_user_id:
+                    current_user_id = 'None'
                 pokemon_winner = user_pokemon_stats if user_pokemon_stats['hp'] > 0 else enemy_pokemon_stats
 
-                battle.SaveBattleResult(battle_round, user_pokemon_stats['name'], enemy_pokemon_stats['name'], pokemon_winner['name'])
+                battle.SaveBattleResult(current_user_id, battle_round, user_pokemon_stats['name'], enemy_pokemon_stats['name'], pokemon_winner['name'])
 
                 logs: typing.List[str] = request.session.get('logs')
                 logs.append("".join(logs_of_battle))
@@ -178,100 +185,160 @@ def PokemonBattle(request, pokemon: str = None):
     }
     return render(request, 'main/battle.html', data_2_render)
 
-## ------------------------------ APIv1
 
-from rest_framework import generics
-from rest_framework.response import Response
 import requests
 
-#GET /api/v1/pokemon/list/?limit=3&offset=5&filter=hp,speed,attack&format=json
-class PokemonListApiView(generics.ListAPIView):
 
-    def get(self, request):
-        limit = self.request.query_params.get('limit', 6)
-        offset = self.request.query_params.get('offset', 0)
+## ------------------------------- Login and Registered
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import logout, login, authenticate
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
+
+@login_required(login_url='/login/')
+def Profile(request):
+    return render(request, 'main/profile.html')
+
+
+def Logout(request):
+    logout(request)
+    return redirect('catalog')
+
+def RegisterNewUser(request):
+    if request.method == 'POST':
+        form = forms.CreateUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user)
+            return redirect('profile') 
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'main/registration.html', {'form': form})
+
+def LoginUser(request):
+    form = None
+    second_code = None
+    if request.method == 'POST':
+        form = forms.LoginUserForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            print(username)
+            print(email)
+            print(password)
+            user = authenticate(request, username=username, password=password)
+            print(user)
+            if user:
+                email_subject = "PokeService. Вход в свой профиль"
+                second_code = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+                print('code_second:', second_code)
+                email_message = "Ваш код для подтверждения, никому не сообщайте: {}.".format(second_code)
+                battle.SendBattleResult(email_subject, email, email_message)
+                request.session['user_email'] = email
+                request.session['username'] = username
+                request.session['password'] = password
+                request.session['second_code'] = second_code
+                next_url = request.GET.get('next', '')
+                print(next_url)
+                if next_url:
+                    return redirect(next_url)
+                else:
+                    return redirect('profile')
+    else:
+        form = forms.LoginUserForm()
+    return render(request, '../templates/registration/login.html', {'form': form})
+
+from django.contrib import messages
+
+def CodeConfirmView(request):
+    if request.method == 'POST':
+        form = forms.CodeConfirmForm(request.POST)
+        if form.is_valid():
+            second_code = request.session.get('second_code', None)
+            email = request.session.get('user_email')
+            username = request.session.get('username')
+            password = request.session.get('password')
+            user_entered_code = form.cleaned_data['code']
+            print(email)
+            print(username)
+            print(password)
+            user = authenticate(request, username=username, password=password)
+            print(user)
+            if user is not None:
+                if user_entered_code == second_code:
+                    login(request, user)
+                    messages.success(request, 'Successfully logged in')
+                    del request.session['second_code']
+                    return redirect('profile')
+                else:
+                    messages.error(request, 'Invalid code')
+    else:
+        form =  forms.CodeConfirmForm()
+    return render(request, 'main/code_confirmation.html', {'form': form})
+
+
+## ------------------------------- APIv2
+
+
+from rest_framework.views import APIView
+
+#GET /api/v2/pokemon/list/?limit=12&offset=4&filter=name,hp,attack
+class PokemonListApi2View(APIView):
+    def get(self, request, format=None):
+        limit = request.query_params.get('limit', 6)
+        offset = request.query_params.get('offset', 0)
         filters = self.request.query_params.get('filter', [])
         
         data = casts.GetPokemons(n_pokemons=int(limit), offset_n=int(offset))
         filtered_data = casts.FilterPokemonData(data, filters)
-        
-        return Response({'PokemonList:': filtered_data})
-    
-    def get_queryset(self):
-        return casts.GetPokemons()
-    
-#GET /api/v1/pokemon/5?filter=name,hp,speed
-class PokemonIdApiView(generics.ListAPIView):
+        return JsonResponse(filtered_data, safe=False)
+
+#GET /api/v2/pokemon/5?filter=name,hp,speed
+class PokemonIdApi2View(APIView):
     def get(self, request, pokemon_id):
-        id = pokemon_id
-        filters = self.request.query_params.get('filter', [])
-
-
-        url = casts.URL_2_CAST + f'/{id}'
-        data = requests.get(url).json()
+        filters = request.query_params.get('filter', [])
+        data = requests.get(casts.URL_2_CAST+f"/{pokemon_id}").json()
         filtered_data = casts.FilterPokemonData([data['name']], filters)
+        return JsonResponse(filtered_data, safe=False)
 
-        return Response({f'pokemon_{id}': filtered_data})
-    
-    def get_queryset(self):
-        return casts.GetPokemons()
-    
-
-#GET /api/v1/pokemon/random?format=json
-class PokemonRandomIdApiView(generics.ListAPIView):
+#GET /api/v2/pokemon/random
+class PokemonRandomIdApi2View(APIView):
     def get(self, request):
         pokemon = casts.GetRandomPokemonData()
-        return Response({f'random_pokemon_name': pokemon['id']})
+        return JsonResponse(pokemon, safe=False)
     
-    def get_queryset(self):
-        return casts.GetPokemons()
-
-
-
-#GET /api/v1/fight/fast?user_id=4&enemy_id=2
-class PokemonBattleFastApiView(generics.ListAPIView):
-    dict_pokemons = {}
-
+#GET /api/v2/battle/fast?user_id=4&enemy_id=2
+class PokemonBattleFastApi2View(APIView):
     def get(self, request):
-        user_pokemon = self.request.query_params.get('user_id', 0)
-        enemy_pokemon = self.request.query_params.get('enemy_id', 0)
-        battle_rounds: int = 0
-        self.dict_pokemons = {
-            'user_pokemon' : battle.InitPokemonStats(casts.GetPokemonData(user_pokemon)),
-            'enemy_pokemon' : battle.InitPokemonStats(casts.GetPokemonData(enemy_pokemon))
+        user_pokemon = request.query_params.get('user_id', 0)
+        enemy_pokemon = request.query_params.get('enemy_id', None)
+        if not enemy_pokemon:
+            enemy_pokemon = casts.GetRandomPokemonData()["id"]
+        return JsonResponse(battle.GetResultFastBattle(user_pokemon, enemy_pokemon), safe=False)
+
+#GET /api/v2/battle?user_id=4&enemy_id=2
+class PokemonBattleInfoApi2View(APIView):
+    def get(self, request):
+        user_pokemon = request.query_params.get('user_id', 0)
+        enemy_pokemon = request.query_params.get('enemy_id', None)
+        if not enemy_pokemon:
+            enemy_pokemon = casts.GetRandomPokemonData()["id"]
+        battle_info = {
+            "pokemon1": casts.GetPokemonData(user_pokemon),
+            "pokemon2": casts.GetPokemonData(enemy_pokemon)
         }
+        return JsonResponse(battle_info, safe=False)
 
-        while self.dict_pokemons['user_pokemon']['hp'] > 0 and self.dict_pokemons['enemy_pokemon']['hp']:
-            battle_rounds+=1
-            battle.AttackPart(user_roll=random.randint(1,10), 
-                              user_stats=self.dict_pokemons['user_pokemon'], 
-                              enemy_stats=self.dict_pokemons['enemy_pokemon'])
-        
-        if self.dict_pokemons['user_pokemon']['hp'] <= 0:
-            pokemon_winner = self.dict_pokemons['enemy_pokemon']['name']
-        else:
-            pokemon_winner = self.dict_pokemons['user_pokemon']['name']
-        
-        dict_2_res = {
-            "user_pokemon":{
-                "name": self.dict_pokemons['user_pokemon']['name'],
-                "hp": self.dict_pokemons['user_pokemon']['hp']
-            },
-            "enemy_pokemon":{
-                "name": self.dict_pokemons['enemy_pokemon']['name'],
-                "hp": self.dict_pokemons['enemy_pokemon']['hp']
-            },
-            "total_rounds": battle_rounds,
-            "pokemon_winner": pokemon_winner
-        }
+from main.serializers import SerializerBattleLog
 
-
-        return Response(dict_2_res)
-
-    def get_queryset(self):
-        return casts.GetPokemons()
-
-
+class PokemonBattleLogRoundApi2View(APIView):
+    def post(self, request, format=None):
+        serializer = SerializerBattleLog(data=request.data)
+        # TODO
 
 ## ------------------------------ FTP
 
@@ -283,3 +350,6 @@ def PokemonSave2FTP(request, pokemon):
     except:
         return JsonResponse({"status": "failed"})
     
+
+def PokemonsDashboards(request):
+    return render(request, 'main/dashboards.html')

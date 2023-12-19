@@ -13,3 +13,4 @@ COPY ./requirements.txt /usr/src/pokeservice/requirements.txt
 RUN pip install -r /usr/src/pokeservice/requirements.txt
 
 COPY . /usr/src/pokeservice/
+RUN python3 /usr/src/pokeservice/PokeServiceMain/manage.py test
