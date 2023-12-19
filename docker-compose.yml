@@ -32,10 +32,25 @@ services:
       - psql_variables.env
     networks:
       - pokenet
+  poke-grafana:
+    image: grafana/grafana-oss
+    container_name: poke-grafana
+    restart: unless-stopped
+    networks:
+      - pokenet
+      - internet
+    ports:
+      - 3000:3000
+    volumes:
+      - "./grafana.ini:/etc/grafana/grafana.ini"
+      - grafana-storage:/var/lib/grafana
+    user: "472"
+
   poke-django:
     build: .
     container_name: poke
     restart: unless-stopped
+    command: bash /usr/src/pokeservice/startup_script.sh
     volumes:
       - .:/usr/src/pokeservice
     ports:
@@ -56,3 +71,5 @@ networks:
   pokenet:
     name: pokenet
     driver: bridge
+volumes:
+  grafana-storage: {}

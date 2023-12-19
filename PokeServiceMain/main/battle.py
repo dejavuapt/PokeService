@@ -28,8 +28,9 @@ def SyncSession(request, params, values) -> None:
 
 
 
-def SaveBattleResult(round: int, user_pok:str , enemy_pok:str, winner_pok:str) -> None:
+def SaveBattleResult(current_user_id, round: int, user_pok:str , enemy_pok:str, winner_pok:str) -> None:
     battle_result = models.BattleLog(
+                    account_id = current_user_id,
                     battle_date = datetime.datetime.now(),
                     battle_round = round,
                     user_pokemon = user_pok,

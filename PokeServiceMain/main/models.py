@@ -1,7 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import User,  AbstractBaseUser
+
+
 
 # Create your models here.
 class BattleLog(models.Model):
+    account_id = models.CharField(max_length=30, default='None')
     battle_date = models.DateTimeField()
     battle_round = models.IntegerField()
     user_pokemon = models.CharField(max_length=30)
@@ -21,3 +25,10 @@ class BattleRound(models.Model):
     is_last = models.BooleanField()
 
 
+class BaseUser(AbstractBaseUser):
+    email = models.EmailField(unique=False)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.email
