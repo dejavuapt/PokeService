@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User,  AbstractBaseUser
 
 
-
+#d
 # Create your models here.
 class BattleLog(models.Model):
     account_id = models.CharField(max_length=30, default='None')
