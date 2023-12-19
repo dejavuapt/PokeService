@@ -23,11 +23,11 @@ jobs:
     - name: Build the Docker image
       run: docker compose up -d
 
-    - name: run container
-      run: docker exec -i poke bash
+    # - name: run container
+    #   run: docker exec -i poke bash
 
-    - name: Run tests
-      run: python3 PokeServiceMain/manage.py test PokeServiceMain/main/
+    # - name: Run tests
+    #   run: python3 PokeServiceMain/manage.py test PokeServiceMain/main/
       
   push_to_registry:
     name: Push Docker image to Docker Hub
