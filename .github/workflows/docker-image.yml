@@ -21,7 +21,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker compose up -d && docker exec -i poke bash 
+      run: docker compose up -d
+
+    - name: run container
+      run: docker exec -i poke bash
 
     - name: Run tests
       run: python3 PokeServiceMain/manage.py test PokeServiceMain/main/
